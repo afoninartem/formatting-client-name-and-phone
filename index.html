@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
   <title>Document</title>
 </head>
 <body>
   <form action="" class="upload">
-    <label for="list">Загрузить список телефонов:</label>
+    <p>Файл должен содержать два столбца: <a class="tooltip-1" href="">первый - телефоны, второй - ФИО<span><img src="./img/two-columns.PNG" alt="excel menu save as"></span></a>. Наличие заголовка не играет роли. Формат файла - CSV (разделители - запятые). <a class="tooltip-2" href="">//можно сохранить из Экселя<span><img src="./img/choose-your-format.PNG" alt="excel menu save as"></span></a></p>
+    <label for="list">Загрузить список телефонов в формате CSV:</label>
     <input type="file" name="full-list" id="list">
   </form>
   <button type="button" id="download">Скачать</button>

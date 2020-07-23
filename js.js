@@ -6,12 +6,16 @@ const numberCorrection = (str, i) => {
     result = result.join('');
     if (result.length > 11 || result.length < 10) {
       const li = document.createElement('li');
-      li.innerHTML = `Строка ${+i + 1}. Было: <b>${str}</b>. Стало: <b>${result}</b>`;
+      li.innerHTML = `Строка ${+i + 1}. Было: <b>${str}</b>. Стало: <b>${result}</b> - номер указан некорректно.`;
       document.querySelector('.check__list').appendChild(li);
     } else {
       return result;
     }
   }
+}
+
+const clearCheckList = () => {
+  document.querySelector('.check__list').innerHTML = '';
 }
 
 function ucFirst(str) {
@@ -27,11 +31,6 @@ const chechIncludes = (string, include) => {
 
 const getClientFirstName = (str, i) => {
   let firstName;
-  // if (str === undefined) {
-  //   const li = document.createElement('li');
-  //   li.innerHTML = `Строка ${+i + 1}. Было: <b>${str}</b> Стало: <b>${firstName}</b>`;
-  //   document.querySelector('.check__list').appendChild(li);
-  // }
   if (str.length !== 0) {
     const arr = str.split(' ');
     // console.log(arr);
@@ -44,8 +43,8 @@ const getClientFirstName = (str, i) => {
         firstName = arr[0];
       } else if (chechIncludes(arr[1], 'вич|вна')) {
         firstName = arr[0];
-      } else if (chechIncludes(arr[0], `ев$|ов$|ева$|ова$|ин$|ина$|ая$|ий$|ко$`)) { 
-        firstName = arr[1]; 
+      } else if (chechIncludes(arr[0], `ев$|ов$|ева$|ова$|ин$|ина$|ая$|ий$|ко$`)) {
+        firstName = arr[1];
       } else {
         const li = document.createElement('li');
         li.innerHTML = `Строка ${+i + 1}. Было: <b>${str}</b> Стало: <b>${firstName}</b>`;
@@ -61,40 +60,35 @@ const getClientFirstName = (str, i) => {
 }
 
 document.getElementById('list').onchange = function () {
+  clearCheckList();
   let file = this.files[0];
   let reader = new FileReader();
   reader.onload = function (progressEvent) {
     let str = this.result.split('\n');
-    for (let i = 0; i < str.length - 1; i += 1) {
+    let start = str[0].includes('Моб') ? 1 : 0;
+    console.log(start, str[0])
+    for (let i = start; i < str.length - 1; i += 1) {
       let clientData = str[i];
       const clientDataArr = clientData.split(';');
       const clientPhone = clientDataArr[0];
       const clientFullName = clientDataArr[1];
       const correctPhone = numberCorrection(clientPhone, i);
-      // console.log(correctPhone);
       const correctName = getClientFirstName(clientFullName, i);
-      // console.log(correctName);
       list.push(`${correctPhone};${correctName}`);
-      // if (i === 339) {
-      //   const arr = clientFullName.split(' ');
-      //   console.log(arr)
-      //   console.log(arr[0].length)
-      //   console.log(arr[1].length);
-      // }
     }
   }
   reader.readAsText(file, 'windows-1251');
 }
 
 document.getElementById('download').onclick = function () {
-  console.log(list)
+  // console.log(list)
   var csv = `Телефон;Имя\n`;
   list.forEach(elem => {
     csv += elem;
     csv += '\n';
   });
   var hiddenElement = document.createElement('a');
-  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI("\uFEFF" + csv);
   hiddenElement.target = '_blank';
   hiddenElement.download = 'Рассылка.csv';
   hiddenElement.click();
